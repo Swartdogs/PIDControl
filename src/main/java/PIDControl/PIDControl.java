@@ -36,6 +36,8 @@ public class PIDControl
     private CoefficientValues m_I;
     private CoefficientValues m_D;
 
+    private IFeedForward m_feedForward;
+
     public PIDControl()
     {
         m_P           = new CoefficientValues();
@@ -55,6 +57,8 @@ public class PIDControl
         m_D.kAbove    = 0;
         m_D.kBelow    = 0;
         m_D.kNow      = 0;
+
+        m_feedForward = null;
 
         m_deadband          =  0.0;
         m_errorIsPositive   =  false;
@@ -111,6 +115,11 @@ public class PIDControl
                         (m_I.kNow * m_errorTotal) +
                         (m_D.kNow * errorDiff);
 
+        if (m_feedForward != null)
+        {
+            output += m_feedForward.calculateFeedForward();
+        }
+
         if (m_useRamp)
         {
             m_rampNow = Math.min(m_rampNow + m_rampStep, 1.0);
@@ -151,6 +160,11 @@ public class PIDControl
     {
         m_errorTotal = 0.0;
         m_rampNow = m_rampMin;
+    }
+
+    public void setFeedForward(IFeedForward feedForward)
+    {
+        m_feedForward = feedForward;
     }
 
     public void setCoefficient(Coefficient kWhich, double errorThreshold, double kAbove, double kBelow)
