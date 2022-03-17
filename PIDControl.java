@@ -83,6 +83,11 @@ public class PIDControl
 
     public double calculate(double input)
     {
+        return calculate(input, false);
+    }
+
+    public double calculate(double input, boolean print)
+    {
         double error = m_setpoint - input;
         double errorDiff = error - m_errorPrev;
 
@@ -114,6 +119,11 @@ public class PIDControl
         double output = (m_P.kNow * error) +
                         (m_I.kNow * m_errorTotal) +
                         (m_D.kNow * errorDiff);
+
+        if (print)
+        {
+            System.out.println(String.format("P: %4.2f, I: %4.2f, D: %4.2f", m_P.kNow * error, m_I.kNow * m_errorTotal, m_D.kNow * errorDiff));
+        }
 
         if (m_feedForward != null)
         {
